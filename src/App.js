@@ -4,12 +4,14 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import './App.css';
 
 function App() {
- 
-  const formSchema = yup.object().shape({
-    name: yup.string().required("Nome obrigatório"),
-    email: yup.string().required("E-mail obrigatório").email("E-mail inválido"),
-    cellphone: yup.string().required("Telefone obrigatório"),
-    address: yup.string().required("Endereço obrigatório")
+
+
+  //yup object significa que meu resultado do yup precisa ser um objeto
+  const formSchema = yup.object({
+    name: yup.string().max(18).required("Nome obrigatório"),
+    email: yup.string().email("Isto não é um e-mail").required("E-mail obrigatório"),
+    password: yup.string().min(8, "este campo deve ter ao menos 8 caracteres").required("Este campo é obrigatório"),
+    confirm: yup.string().oneOf([yup.ref("password")], "a senha deve ser igual a anterior").required("este campo é obrigatório")
   })
 
   const {register, handleSubmit, formState: {errors}} = useForm({
@@ -22,14 +24,15 @@ function App() {
     <div className="App">
       <h3>Formulário</h3>
       <form className="form" onSubmit={handleSubmit(onSubmitFunction)}>
-        <input placeholder="Nome" {...register("name")}/>
+        <input placeholder="Nome" type="text" {...register("name")} />
         {errors.name?.message}
-        <input placeholder="Email" {...register("email")}/>
+        <input placeholder="Email" type="text" {...register("email")}/>
         {errors.email?.message}
-        <input placeholder="Telefone" {...register("cellphone")}/>
-        {errors.cellphone?.message}
-        <input placeholder="Endereço" {...register("address")}/>
-        {errors.address?.message}
+        <input placeholder="Senha" type="password" {...register("password")}/>
+        {errors.password?.message}
+        <input placeholder="Confirme a senha" type="password" {...register("confirm")}/>
+        {errors.confirm?.message}
+    
         <button type="submit">Enviar!</button>
       </form>
     </div>
